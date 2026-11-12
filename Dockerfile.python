@@ -1,0 +1,28 @@
+# ---------- Стадия 1: сборка зависимостей ----------
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+# Отдельное виртуальное окружение, которое целиком перенесём во вторую стадию
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# ---------- Стадия 2: итоговый образ ----------
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Только готовое окружение с зависимостями, без кэша pip и инструментов сборки
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Код приложения (лишнее отсекает .dockerignore)
+COPY . .
+
+# Запускаем приложение с помощью uvicorn, делая его доступным по сети
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
