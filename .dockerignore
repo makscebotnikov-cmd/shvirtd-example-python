@@ -1,0 +1,30 @@
+# VCS и служебные файлы
+.git
+.gitignore
+.dockerignore
+
+# Секреты не должны попадать в образ
+.env
+
+# Файлы сборки и оркестрации
+Dockerfile
+Dockerfile.python
+compose.yaml
+proxy.yaml
+deploy.sh
+
+# Конфиги прокси (монтируются в свои контейнеры, приложению не нужны)
+haproxy/
+nginx/
+
+# Документация
+README.md
+LICENSE
+schema.pdf
+
+# Python-мусор и локальные окружения
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
